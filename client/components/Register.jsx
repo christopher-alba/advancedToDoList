@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { newUser } from '../store/actions/auth'
 import { Button } from 'react-bootstrap'
+import {setModalOpen, setModalName} from '../store/actions/modal'
 import './register.css'
 class Register extends Component {
   state = {
@@ -10,6 +11,10 @@ class Register extends Component {
     password: undefined,
     confirmPassword: undefined,
     err: null
+  }
+  close = () => {
+    this.props.setModalOpen(false)
+    this.props.setModalName(null)
   }
   render() {
     return (
@@ -36,7 +41,7 @@ class Register extends Component {
               <input type="password"  onChange={(evt) => this.setState({ confirmPassword: evt.target.value })} />
             </div>
 
-            <Button variant = "outline-light" style={{fontSize:"1.5rem", borderRadius:"10px",paddingLeft:"50px", paddingRight: "50px", marginTop: "50px"}}onClick={async () => {
+            <Button variant = "dark" style={{fontSize:"1.5rem", borderRadius:"10px",paddingLeft:"50px", paddingRight: "50px", marginTop: "50px"}}onClick={async () => {
 
               try {
                 await this.props.newUser({
@@ -47,7 +52,7 @@ class Register extends Component {
                 })
 
                 location.replace('/#/profile')
-
+                this.close()
               } catch (err) {
                 this.setState({ err: err.message })
               }
@@ -62,8 +67,10 @@ class Register extends Component {
   }
 }
 
-const mapDispatchToProps = (dispatch) => ({
-  newUser: (user) => dispatch(newUser(user))
-})
+const mapDispatchToProps = {
+  setModalOpen,
+  setModalName,
+  newUser
+}
 
 export default connect(undefined, mapDispatchToProps)(Register)

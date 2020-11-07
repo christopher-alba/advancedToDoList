@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { authUser } from '../store/actions/auth'
-import {Button} from 'react-bootstrap'
+import {setModalOpen, setModalName} from '../store/actions/modal'
+import { Button } from 'react-bootstrap'
 import './register.css'
 class Logins extends Component {
 
@@ -15,17 +16,21 @@ class Logins extends Component {
     try {
       await this.props.authUser({ email: this.state.email, password: this.state.password })
       location.replace("/#/profile")
+      this.close()
     } catch (err) {
       this.setState({ err })
     }
   }
-
+  close = () => {
+    this.props.setModalOpen(false)
+    this.props.setModalName(null)
+  }
   render() {
     return (
       <div className="registerContainer">
         <div>
           <h1>Log In</h1>
-          <hr/>
+          <hr />
           <div className="inputContainer">
             <input type="email" placeholder="email" onChange={(evt) => {
 
@@ -42,7 +47,7 @@ class Logins extends Component {
           </div>
 
 
-          <Button variant = "outline-light" style={{fontSize:"1.5rem", borderRadius:"10px",paddingLeft:"50px", paddingRight: "50px", marginTop: "50px"}} onClick={() => this.handleClick()}>Log In</Button>
+          <Button variant="dark" style={{ fontSize: "1.5rem", borderRadius: "10px", paddingLeft: "50px", paddingRight: "50px", marginTop: "50px" }} onClick={() => this.handleClick()}>Log In</Button>
           <p>{this.state.err && this.state.err.message}</p>
         </div>
 
@@ -52,10 +57,10 @@ class Logins extends Component {
   }
 }
 
-function mapDispatchToProps(dispatch) {
-  return {
-    authUser: (user) => dispatch(authUser(user))
-  }
+const mapDispatchToProps = {
+  setModalOpen,
+  setModalName,
+  authUser
 }
 
 export default connect(undefined, mapDispatchToProps)(Logins)

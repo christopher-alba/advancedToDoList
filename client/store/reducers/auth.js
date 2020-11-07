@@ -1,4 +1,4 @@
-import { SET_AUTH } from '../../types'
+import { SET_AUTH } from '../types'
 
 const INITIAL_STATE = {
   isAuthenticated: false,

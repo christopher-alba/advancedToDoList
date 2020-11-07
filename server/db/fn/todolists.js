@@ -27,13 +27,16 @@ const addTodolist = (list, userID, db = connection) => {
 
 }
 
-const updateTodolist = (updates, userID, todolistID, db = connection) => {
+const updateTodolist = (updates, todolistID, db = connection) => {
+
   return db('todolists')
     .where('id', todolistID)
     .update(snakecaseKeys(updates))
     .then(() => {
-      return getTodolists(userID)
-        .then(todolists => todolists)
+      return db('todolists')
+        .where('id', todolistID)
+        .select()
+        .first()
     })
     .catch(err => {
       console.error(err)

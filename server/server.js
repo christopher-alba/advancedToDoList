@@ -75,6 +75,21 @@ const RootMutationType = new GraphQLObjectType({
         // console.log(dblist);
         return dblist
       }
+    },
+    updateList: {
+      type:ListsType,
+      description: 'updates a list',
+      args: {
+        name: { type: GraphQLNonNull(GraphQLString)},
+        user_id: {type: GraphQLNonNull(GraphQLInt)},
+        id: {type: GraphQLNonNull(GraphQLInt)}
+      },
+      resolve: (parent, args) => {
+        const list = { name: args.name, user_id: args.user_id }
+        let dblist = updateTodolist(list, args.id )
+        // console.log(dblist);
+        return dblist
+      }
     }
   })
 })

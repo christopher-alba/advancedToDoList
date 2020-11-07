@@ -1,8 +1,8 @@
 const connection = require('../connection')
 const snakecaseKeys = require('snakecase-keys')
-const getTodolistItems = (userID, db = connection) => {
+const getTodolistItems = (todolistID, db = connection) => {
   return db('todolistItems')
-    .where('user_id', userID)
+    .where('todolist_id', todolistID)
     .select()
     .catch(err => {
       // eslint-disable-next-line no-console
@@ -10,11 +10,11 @@ const getTodolistItems = (userID, db = connection) => {
     })
 }
 
-const addTodolistItem = (item, userID, db = connection) => {
+const addTodolistItem = (item, todolist_id, db = connection) => {
   return db('todolistItems')
     .insert(snakecaseKeys(item))
     .then(() => {
-      return getTodolistItems(userID)
+      return getTodolistItems(todolist_id)
     })
 }
 

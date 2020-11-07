@@ -19,6 +19,13 @@ const {
   deleteTodolist
 } = require('./db/fn/todolists')
 
+const {
+  getTodolistItems,
+  addTodolistItem,
+  updateTodolistItem,
+  deleteTodolistItem
+} = require('./db/fn/todolistItems')
+
 var { graphqlHTTP } = require('express-graphql');
 var {
   GraphQLSchema,
@@ -40,6 +47,16 @@ const ListsType = new GraphQLObjectType({
   })
 })
 
+const ItemsType = new GraphQLObjectType({
+  name: 'item',
+  description: 'This represents an item of a list',
+  fields: () => ({
+    id: { type: GraphQLNonNull(GraphQLInt) },
+    item: { type: GraphQLNonNull(GraphQLString) },
+    todolist_id: { type: GraphQLNonNull(GraphQLInt) }
+  })
+})
+
 const RootQueryType = new GraphQLObjectType({
   name: 'Query',
   description: 'Root Query',
@@ -53,6 +70,17 @@ const RootQueryType = new GraphQLObjectType({
       resolve: (parent, args) => {
         let dblists = getTodolists(args.user_id)
         return dblists
+      }
+    },
+    items: {
+      type: GraphQLList(ItemsType),
+      description: 'A list of items',
+      args: {
+        todolist_ID: { type: GraphQLNonNull(GraphQLInt) }
+      },
+      resolve: (parent, args) => {
+        let dbitems = getTodolistItems(args.todolist_ID)
+        return dbitems
       }
     }
   })
@@ -74,6 +102,18 @@ const RootMutationType = new GraphQLObjectType({
         let dblist = addTodolist(list, args.user_id)
         // console.log(dblist);
         return dblist
+      }
+    },
+    addItem: {
+      type: GraphQLList(ItemsType),
+      description: 'add an item',
+      args: {
+        todolist_id: { type: GraphQLNonNull(GraphQLInt) },
+        item: { type: GraphQLNonNull(GraphQLString) }
+      },
+      resolve: (parent, args) => {
+        const item = { item: args.item, todolist_id: args.todolist_id }
+        return addTodolistItem(item, args.todolist_id)
       }
     },
     updateList: {

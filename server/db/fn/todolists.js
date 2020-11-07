@@ -1,7 +1,6 @@
 const connection = require('../connection')
 const snakecaseKeys = require('snakecase-keys')
 const getTodolists = (userID, db = connection) => {
-  console.log(userID);
   return db('todolists')
     .where('user_id', userID)
     .select()

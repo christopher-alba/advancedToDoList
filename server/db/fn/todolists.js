@@ -45,7 +45,7 @@ const updateTodolist = (updates, todolistID, db = connection) => {
 }
 
 const deleteTodolist = (todolistID, db = connection) => {
-  return db('todolist')
+  return db('todolists')
     .where('id', todolistID)
     .delete()
     .then(() => todolistID)

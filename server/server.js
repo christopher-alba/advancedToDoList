@@ -34,9 +34,9 @@ const ListsType = new GraphQLObjectType({
   name: 'list',
   description: 'This represents a list of a user',
   fields: () => ({
-    id: {type: GraphQLNonNull(GraphQLInt)},
-    name: {type: GraphQLNonNull(GraphQLString)},
-    user_id: {type: GraphQLNonNull(GraphQLInt)}
+    id: { type: GraphQLNonNull(GraphQLInt) },
+    name: { type: GraphQLNonNull(GraphQLString) },
+    user_id: { type: GraphQLNonNull(GraphQLInt) }
   })
 })
 
@@ -48,12 +48,12 @@ const RootQueryType = new GraphQLObjectType({
       type: GraphQLList(ListsType),
       description: 'A list of lists',
       args: {
-        user_id: {type: GraphQLNonNull(GraphQLInt)}
+        user_id: { type: GraphQLNonNull(GraphQLInt) }
       },
-      resolve: (parent, args) => { 
+      resolve: (parent, args) => {
         let dblists = getTodolists(args.user_id)
         return dblists
-       }
+      }
     }
   })
 })
@@ -66,8 +66,8 @@ const RootMutationType = new GraphQLObjectType({
       type: ListsType,
       description: 'add a list',
       args: {
-        name: { type: GraphQLNonNull(GraphQLString)},
-        user_id: {type: GraphQLNonNull(GraphQLInt)}
+        name: { type: GraphQLNonNull(GraphQLString) },
+        user_id: { type: GraphQLNonNull(GraphQLInt) }
       },
       resolve: (parent, args) => {
         const list = { name: args.name, user_id: args.user_id }
@@ -77,18 +77,32 @@ const RootMutationType = new GraphQLObjectType({
       }
     },
     updateList: {
-      type:ListsType,
+      type: ListsType,
       description: 'updates a list',
       args: {
-        name: { type: GraphQLNonNull(GraphQLString)},
-        user_id: {type: GraphQLNonNull(GraphQLInt)},
-        id: {type: GraphQLNonNull(GraphQLInt)}
+        name: { type: GraphQLNonNull(GraphQLString) },
+        user_id: { type: GraphQLNonNull(GraphQLInt) },
+        id: { type: GraphQLNonNull(GraphQLInt) }
       },
       resolve: (parent, args) => {
         const list = { name: args.name, user_id: args.user_id }
-        let dblist = updateTodolist(list, args.id )
+        let dblist = updateTodolist(list, args.id)
         // console.log(dblist);
         return dblist
+      }
+    },
+    deleteList: {
+      type: ListsType,
+      description: 'deletes a list',
+      args: {
+        id: { type: GraphQLNonNull(GraphQLInt) }
+      },
+      resolve: (parent, args) => {
+        let dblist = deleteTodolist(args.id)
+        // console.log(dblist);
+        return {
+          id: dblist
+        }
       }
     }
   })

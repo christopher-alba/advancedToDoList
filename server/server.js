@@ -47,8 +47,11 @@ const RootQueryType = new GraphQLObjectType({
     lists: {
       type: GraphQLList(ListsType),
       description: 'A list of lists',
-      resolve: () => { 
-        let dblists = getTodolists(1)
+      args: {
+        user_id: {type: GraphQLNonNull(GraphQLInt)}
+      },
+      resolve: (parent, args) => { 
+        let dblists = getTodolists(args.user_id)
         return dblists
        }
     }

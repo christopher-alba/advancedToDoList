@@ -51,7 +51,7 @@ class Register extends Component {
                   confirmPassword: this.state.confirmPassword
                 })
 
-                location.replace('/#/profile')
+                location.replace('/#/todolist')
                 this.close()
               } catch (err) {
                 this.setState({ err: err.message })

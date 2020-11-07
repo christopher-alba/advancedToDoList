@@ -15,7 +15,7 @@ class Logins extends Component {
 
     try {
       await this.props.authUser({ email: this.state.email, password: this.state.password })
-      location.replace("/#/profile")
+      location.replace("/#/todolist")
       this.close()
     } catch (err) {
       this.setState({ err })

@@ -131,6 +131,21 @@ const RootMutationType = new GraphQLObjectType({
         return dblist
       }
     },
+    updateItem: {
+      type: GraphQLList(ItemsType),
+      description: 'updates an item',
+      args: {
+        item: { type: GraphQLNonNull(GraphQLString) },
+        todolist_id: { type: GraphQLNonNull(GraphQLInt) },
+        id: { type: GraphQLNonNull(GraphQLInt) }
+      },
+      resolve: (parent, args) => {
+        const list = { item: args.item, todolist_id: args.todolist_id }
+        let dblist = updateTodolistItem(list, args.id)
+        // console.log(dblist);
+        return dblist
+      }
+    },
     deleteList: {
       type: ListsType,
       description: 'deletes a list',
@@ -139,6 +154,20 @@ const RootMutationType = new GraphQLObjectType({
       },
       resolve: (parent, args) => {
         let dblist = deleteTodolist(args.id)
+        // console.log(dblist);
+        return {
+          id: dblist
+        }
+      }
+    },
+    deleteItem: {
+      type: ItemsType,
+      description: 'deletes an item',
+      args: {
+        id: { type: GraphQLNonNull(GraphQLInt) }
+      },
+      resolve: (parent, args) => {
+        let dblist = deleteTodolistItem(args.id)
         // console.log(dblist);
         return {
           id: dblist

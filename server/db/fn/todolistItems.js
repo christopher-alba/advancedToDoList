@@ -4,7 +4,7 @@ const getTodolistItems = (todolistID, db = connection) => {
   return db('todolistItems')
     .where('todolist_id', todolistID)
     .select()
-    .catch(err => {
+    .catch((err) => {
       // eslint-disable-next-line no-console
       console.error(err)
     })

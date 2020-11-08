@@ -2,16 +2,10 @@ import React, { useState } from 'react'
 import { useQuery, gql, useMutation } from '@apollo/client';
 import { connect } from 'react-redux'
 import Button from 'react-bootstrap/Button'
+import UsersLists from './UsersLists'
 
 
-const GET_LISTS = gql`
-  query Lists($user_id: Int! ) {
-    lists (user_id: $user_id) {
-      name
-      id
-    }
-  }
-`
+
 const GET_ITEMS = gql`
 query Items($todolist_ID: Int! ){
   items (todolist_ID: $todolist_ID ) {
@@ -32,21 +26,42 @@ mutation AddItem($item: String!, $todolist_id: Int!){
 const todolist = (props) => {
 
 
-  const [todolistid, settodolistid] = useState('')
   const [item, setItem] = useState("")
 
-  const [addItem, { data }] = useMutation(ADD_ITEM)
-  let lists = useQuery(GET_LISTS, { variables: { user_id: props.userId } })
-  let items = useQuery(GET_ITEMS, { variables: { todolist_ID: todolistid } })
+  const [addItem] = useMutation(ADD_ITEM, {
+    update(cache, { data: { addItem } }) {
+      console.log(cache);
+      cache.modify({
+        fields: {
+          item(existingItems = []) {
+            const newItemRef = cache.writeFragment({
+              data: addItem,
+              fragment: gql`
+                fragment NewItem on Item {
+                  id
+                  item
+                  todolist_id
+                }
+              `
+             
+            });
+            console.log(existingItems);
+            return [...existingItems, newItemRef];
+          }
+        }
+      });
+    }
+  });
 
- 
+  
+  let items = useQuery(GET_ITEMS, { variables: { todolist_ID: props.todolistid } })
 
-  const handleListClick = (id) => {
-    settodolistid(id)
-  }
+
+
+
   const handleAddItem = () => {
     addItem({
-      variables: { item: item, todolist_id: todolistid }
+      variables: { item: item, todolist_id: props.todolistid }
     })
   }
   const handleChange = (evt) => {
@@ -54,9 +69,6 @@ const todolist = (props) => {
   }
   return (
     <>
-      <h1>Welcome to your to do list</h1>
-      <h3>Lists</h3>
-      {lists.data !== undefined && lists.data.lists.map(list => <div onClick={() => handleListClick(list.id)}>{list.name}</div>)}
       <div style={{ background: 'black', color: 'white' }}>
         <h3>List Items</h3>
         {items.data && items.data.items.map(item => <div>{item.item}</div>)}

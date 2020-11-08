@@ -3,13 +3,14 @@ import Navbar from './Navbar'
 import { Route } from 'react-router-dom'
 import MainModalForm from './MainModalForm'
 import Home from './Home'
-import ToDoList from './ToDoList'
+import UsersLists from './UsersLists'
+
 const App = () => {
   return (
     <>
       <Navbar />
       <Route exact path = '/' component = {Home}/>
-      <Route exact path = '/todolist' component = {ToDoList}/>
+      <Route exact path = '/todolist' component = {UsersLists}/>
       <MainModalForm/>
     </>
   )

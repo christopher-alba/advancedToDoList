@@ -129,7 +129,7 @@ const RootMutationType = new GraphQLObjectType({
     },
     // ITEM
     addItem: {
-      type: ListType,
+      type: ItemType,
       description: 'add an item',
       args: {
         todolist_id: { type: GraphQLNonNull(GraphQLID) },

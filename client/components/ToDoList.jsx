@@ -3,26 +3,29 @@ import { useQuery, gql, useMutation } from '@apollo/client'
 import { connect } from 'react-redux'
 import Button from 'react-bootstrap/Button'
 
+import { GET_USER_LISTS } from './UsersLists'
+
 const ADD_ITEM = gql`
   mutation AddItem($item: String!, $todolist_id: ID!) {
     addItem(item: $item, todolist_id: $todolist_id) {
       id
-      name
-      user_id
-      items {
-        item
-      }
     }
   }
 `
 const Todolist = (props) => {
-  const { id, items } = props.list
   const [item, setItem] = useState('')
-  const [addItem] = useMutation(ADD_ITEM)
+  const [addItem] = useMutation(ADD_ITEM, {
+    refetchQueries: [
+      {
+        query: GET_USER_LISTS,
+        variables: { user_id: props.userId }
+      }
+    ]
+  })
 
   const handleAddItem = () => {
     addItem({
-      variables: { item: item, todolist_id: id }
+      variables: { item: item, todolist_id: props.todoId }
     })
   }
   const handleChange = (evt) => {
@@ -31,8 +34,6 @@ const Todolist = (props) => {
 
   return (
     <div style={{ background: 'black', color: 'white' }}>
-      <h3>List Items</h3>
-      {items && items.map((el, i) => <div key={i}>{el.item}</div>)}
       <input
         onChange={handleChange}
         type="text"

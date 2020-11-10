@@ -2,45 +2,41 @@ const connection = require('../connection')
 const snakecaseKeys = require('snakecase-keys')
 const getTodolists = (userID, db = connection) => {
   return db('todolists')
-    .where('user_id', userID)
     .select()
-    .catch(err => {
+    .where('todolists.user_id', userID)
+    .catch((err) => {
       // eslint-disable-next-line no-console
       console.error(err)
     })
 }
 
-const addTodolist = (list, userID, db = connection) => {
+const getTodoList = (todoListID, db = connection) => {
   return db('todolists')
-    .insert(snakecaseKeys(list))
-    .then(() => {
-      return db('todolists')
-        .where('name', list.name)
-        .where('user_id', userID)
-        .select()
-        .first()
-    })
-    .catch(err => {
+    .select()
+    .join('todolistItems', 'todolists.id', 'todolistItems.todolist_id')
+    .where('todolists.id', todoListID)
+    .catch((err) => {
+      // eslint-disable-next-line no-console
       console.error(err)
     })
-
 }
 
-const updateTodolist = (updates, todolistID, db = connection) => {
+const addTodolist = (list, userID, db = connection) =>
+  db('todolists')
+    .insert(snakecaseKeys(list))
+    .then(() => db('todolists').where('user_id', userID).select())
+    .catch(console.error)
 
+const updateTodolist = (updates, todolistID, db = connection) => {
   return db('todolists')
     .where('id', todolistID)
     .update(snakecaseKeys(updates))
     .then(() => {
-      return db('todolists')
-        .where('id', todolistID)
-        .select()
-        .first()
+      return db('todolists').where('id', todolistID).select().first()
     })
-    .catch(err => {
+    .catch((err) => {
       console.error(err)
     })
-
 }
 
 const deleteTodolist = (todolistID, db = connection) => {
@@ -48,12 +44,13 @@ const deleteTodolist = (todolistID, db = connection) => {
     .where('id', todolistID)
     .delete()
     .then(() => todolistID)
-    .catch(err => {
+    .catch((err) => {
       console.error(err)
     })
 }
 module.exports = {
   getTodolists,
+  getTodoList,
   addTodolist,
   updateTodolist,
   deleteTodolist

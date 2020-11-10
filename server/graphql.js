@@ -32,7 +32,7 @@ const ItemsType = new GraphQLObjectType({
   })
 })
 
-const ListsType = new GraphQLObjectType({
+const ListType = new GraphQLObjectType({
   name: 'list',
   description: 'This represents a list of a user',
   fields: () => ({
@@ -42,15 +42,23 @@ const ListsType = new GraphQLObjectType({
   })
 })
 
+const ListsType = new GraphQLList({
+  name: 'lists',
+  description: 'array of lists',
+  field: () => ({
+    lists: ListType
+  })
+})
+
 // =============================
 // ===========QUERY=============
 // =============================
 const RootQueryType = new GraphQLObjectType({
   name: 'Query',
   description: 'Root Query',
-  fields: () => ({
+  fields: {
     lists: {
-      type: new GraphQLList(ListsType),
+      type: ListsType,
       description: 'A list of lists',
       args: {
         user_id: { type: GraphQLNonNull(GraphQLID) }
@@ -65,7 +73,7 @@ const RootQueryType = new GraphQLObjectType({
       },
       resolve: (parent, args) => getTodolistItems(args.todolist_id)
     }
-  })
+  }
 })
 
 // =============================

@@ -3,42 +3,43 @@ import { useQuery, gql } from '@apollo/client'
 import ToDoList from './ToDoList'
 import { connect } from 'react-redux'
 
-const GET_LISTS = gql`
-  query Lists($user_id: ID!) {
+const GET_USER_LISTS = gql`
+  query UserLists($user_id: ID!) {
     lists(user_id: $user_id) {
       id
       name
       user_id
+      items {
+        item
+      }
     }
   }
 `
 
 const UsersLists = (props) => {
-  const [todolistid, settodolistid] = useState('')
-  let { data, loading } = useQuery(GET_LISTS, {
+  const [selectedList, setSelectedList] = useState(null)
+  let { data, loading } = useQuery(GET_USER_LISTS, {
     variables: { user_id: props.userId }
   })
-
-  const handleListClick = (id) => {
-    settodolistid(id)
-  }
 
   if (loading) {
     return <div>Loading...</div>
   }
-  console.log(data)
   return (
-    <>
+    <main>
       <h1>Welcome to your to do list</h1>
       <h3>Lists</h3>
       {data &&
         data.lists.map((list, i) => (
-          <div key={i} onClick={() => handleListClick(list.id)}>
+          <div
+            key={i}
+            onClick={() => setSelectedList({ id: list.id, items: list.items })}
+          >
             {list.name}
           </div>
         ))}
-      {todolistid && <ToDoList todolistid={todolistid} />}
-    </>
+      {selectedList && <ToDoList list={selectedList} />}
+    </main>
   )
 }
 

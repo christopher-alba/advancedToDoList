@@ -11,14 +11,17 @@ const getTodolists = (userID, db = connection) => {
 }
 
 const getTodoList = (todoListID, db = connection) => {
-  return db('todolists')
-    .select()
-    .join('todolistItems', 'todolists.id', 'todolistItems.todolist_id')
-    .where('todolists.id', todoListID)
-    .catch((err) => {
-      // eslint-disable-next-line no-console
-      console.error(err)
-    })
+  return (
+    db('todolists')
+      .select()
+      // .join('todolistItems', 'todolists.id', 'todolistItems.todolist_id')
+      .where('todolists.id', todoListID)
+      .first()
+      .catch((err) => {
+        // eslint-disable-next-line no-console
+        console.error(err)
+      })
+  )
 }
 
 const addTodolist = (list, userID, db = connection) =>

@@ -10,11 +10,20 @@ const getTodolistItems = (todolistID, db = connection) => {
     })
 }
 
+const getTodoItem = (itemId, db = connection) =>
+  db('todolistItems')
+    .select()
+    .where('id', itemId)
+    .first()
+    .catch((err) => console.log(err))
+
 const addTodolistItem = (item, todolist_id, db = connection) => {
   return db('todolistItems')
     .insert(snakecaseKeys(item))
-    .then(() => {
-      return getTodolistItems(todolist_id)
+    .where('todolist')
+    .then(([id]) => {
+      console.log(id)
+      return getTodoItem(id)
     })
 }
 
@@ -35,6 +44,7 @@ const deleteTodolistItem = (itemID, db = connection) => {
 }
 module.exports = {
   getTodolistItems,
+  getTodoItem,
   addTodolistItem,
   updateTodolistItem,
   deleteTodolistItem

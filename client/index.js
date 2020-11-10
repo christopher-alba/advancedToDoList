@@ -9,7 +9,7 @@ import reducers from './store/reducers'
 import { HashRouter as Router } from 'react-router-dom'
 import App from './components/App'
 import { setAuthorizationToken, setAuth } from './store/actions/auth'
-import { ApolloProvider, ApolloClient, InMemoryCache } from '@apollo/client';
+import { ApolloProvider, ApolloClient, InMemoryCache } from '@apollo/client'
 
 // REDUX
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
@@ -31,10 +31,9 @@ if (localStorage.jwtToken) {
 
 // APOLLO && GRAPHQL
 const client = new ApolloClient({
-  uri: './graphql',
+  uri: '/graphql',
   cache: new InMemoryCache()
-});
-
+})
 
 document.addEventListener('DOMContentLoaded', () => {
   ReactDOM.render(

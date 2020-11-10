@@ -3,8 +3,8 @@ const {
   GraphQLObjectType,
   GraphQLString,
   GraphQLList,
+  GraphQLID,
   GraphQLInt,
-  GraphQLFloat,
   GraphQLNonNull
 } = require('graphql')
 
@@ -22,23 +22,23 @@ const {
   deleteTodolistItem
 } = require('./db/fn/todolistItems')
 
-const ListsType = new GraphQLObjectType({
-  name: 'list',
-  description: 'This represents a list of a user',
-  fields: () => ({
-    id: { type: GraphQLNonNull(GraphQLInt) },
-    name: { type: GraphQLNonNull(GraphQLString) },
-    user_id: { type: GraphQLNonNull(GraphQLInt) }
-  })
-})
-
 const ItemsType = new GraphQLObjectType({
   name: 'item',
   description: 'This represents an item of a list',
   fields: () => ({
-    id: { type: GraphQLNonNull(GraphQLInt) },
+    id: { type: GraphQLNonNull(GraphQLID) },
     item: { type: GraphQLNonNull(GraphQLString) },
-    todolist_id: { type: GraphQLNonNull(GraphQLInt) }
+    todolist_id: { type: GraphQLNonNull(GraphQLID) }
+  })
+})
+
+const ListsType = new GraphQLObjectType({
+  name: 'list',
+  description: 'This represents a list of a user',
+  fields: () => ({
+    id: { type: GraphQLNonNull(GraphQLID) },
+    name: { type: GraphQLNonNull(GraphQLString) },
+    user_id: { type: GraphQLNonNull(GraphQLID) }
   })
 })
 
@@ -50,20 +50,20 @@ const RootQueryType = new GraphQLObjectType({
   description: 'Root Query',
   fields: () => ({
     lists: {
-      type: GraphQLList(ListsType),
+      type: new GraphQLList(ListsType),
       description: 'A list of lists',
       args: {
-        user_id: { type: GraphQLNonNull(GraphQLInt) }
+        user_id: { type: GraphQLNonNull(GraphQLID) }
       },
-      resolve: (parent, args) => {
-        let dblists = getTodolists(args.user_id)
-        return dblists
-      }
+      resolve: (parent, args) => getTodolists(args.user_id)
     },
     items: {
-      type: GraphQLList(ItemsType),
+      type: new GraphQLList(ItemsType),
       description: 'A list of items',
-      resolve: (parent, args) => getTodolistItems()
+      args: {
+        todolist_id: { type: GraphQLNonNull(GraphQLID) }
+      },
+      resolve: (parent, args) => getTodolistItems(args.todolist_id)
     }
   })
 })
@@ -76,16 +76,16 @@ const RootMutationType = new GraphQLObjectType({
   description: 'root mutation',
   fields: () => ({
     addList: {
-      type: ListsType,
+      type: GraphQLList(ListsType),
       description: 'add a list',
       args: {
         name: { type: GraphQLNonNull(GraphQLString) },
-        user_id: { type: GraphQLNonNull(GraphQLInt) }
+        user_id: { type: GraphQLNonNull(GraphQLID) }
       },
       resolve: (parent, args) => {
         const list = { name: args.name, user_id: args.user_id }
         let dblist = addTodolist(list, args.user_id)
-        // console.log(dblist);
+        console.log(dblist)
         return dblist
       }
     },
@@ -93,7 +93,7 @@ const RootMutationType = new GraphQLObjectType({
       type: GraphQLList(ItemsType),
       description: 'add an item',
       args: {
-        todolist_id: { type: GraphQLNonNull(GraphQLInt) },
+        todolist_id: { type: GraphQLNonNull(GraphQLID) },
         item: { type: GraphQLNonNull(GraphQLString) }
       },
       resolve: (parent, args) => {
@@ -106,8 +106,8 @@ const RootMutationType = new GraphQLObjectType({
       description: 'updates a list',
       args: {
         name: { type: GraphQLNonNull(GraphQLString) },
-        user_id: { type: GraphQLNonNull(GraphQLInt) },
-        id: { type: GraphQLNonNull(GraphQLInt) }
+        user_id: { type: GraphQLNonNull(GraphQLID) },
+        id: { type: GraphQLNonNull(GraphQLID) }
       },
       resolve: (parent, args) => {
         const list = { name: args.name, user_id: args.user_id }
@@ -121,8 +121,8 @@ const RootMutationType = new GraphQLObjectType({
       description: 'updates an item',
       args: {
         item: { type: GraphQLNonNull(GraphQLString) },
-        todolist_id: { type: GraphQLNonNull(GraphQLInt) },
-        id: { type: GraphQLNonNull(GraphQLInt) }
+        todolist_id: { type: GraphQLNonNull(GraphQLID) },
+        id: { type: GraphQLNonNull(GraphQLID) }
       },
       resolve: (parent, args) => {
         const list = { item: args.item, todolist_id: args.todolist_id }
@@ -135,7 +135,7 @@ const RootMutationType = new GraphQLObjectType({
       type: ListsType,
       description: 'deletes a list',
       args: {
-        id: { type: GraphQLNonNull(GraphQLInt) }
+        id: { type: GraphQLNonNull(GraphQLID) }
       },
       resolve: (parent, args) => {
         let dblist = deleteTodolist(args.id)
@@ -149,7 +149,7 @@ const RootMutationType = new GraphQLObjectType({
       type: ItemsType,
       description: 'deletes an item',
       args: {
-        id: { type: GraphQLNonNull(GraphQLInt) }
+        id: { type: GraphQLNonNull(GraphQLID) }
       },
       resolve: (parent, args) => {
         let dblist = deleteTodolistItem(args.id)

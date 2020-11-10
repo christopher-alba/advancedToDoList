@@ -17,14 +17,18 @@ const getTodoItem = (itemId, db = connection) =>
     .first()
     .catch((err) => console.log(err))
 
-const addTodolistItem = (item, todolist_id, db = connection) => {
+const getUserTodoList = (todolistID, db = connection) =>
+  db('todolists')
+    .select()
+    .where('id', todolistID)
+    .first()
+    .catch((err) => console.log(err))
+
+const addTodolistItem = (item, db = connection) => {
   return db('todolistItems')
     .insert(snakecaseKeys(item))
-    .where('todolist')
-    .then(([id]) => {
-      console.log(id)
-      return getTodoItem(id)
-    })
+    .where('todolist_id', item.todolist_id)
+    .then(() => getUserTodoList(item.todolist_id))
 }
 
 const updateTodolistItem = (updates, todolistID, db = connection) => {

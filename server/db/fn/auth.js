@@ -4,7 +4,7 @@ const fn = require('./user')
 
 const authenticate = async (data, db = connection) => {
   try {
-    if(data.email === '') return 'You must enter an email'
+    if (data.email === '') return 'You must enter an email'
     const user = await db('users').where('email', data.email).first()
     if (typeof user === 'undefined') return 'Email does not exist'
 
@@ -21,18 +21,15 @@ const authenticate = async (data, db = connection) => {
 const newUser = async (data, db = connection) => {
   const { password, confirmPassword, email, fullName } = data
   try {
-
-    if(password !== confirmPassword) return 'Password does not match'
-    if(email === undefined) return 'You must enter an email'
-    if(fullName === undefined ) return 'You must enter your full name'
-    if(password === undefined) return 'You must enter a password'
-    if(confirmPassword === undefined) return 'You must confirm your password'
+    if (password !== confirmPassword) return 'Password does not match'
+    if (email === undefined) return 'You must enter an email'
+    if (fullName === undefined) return 'You must enter your full name'
+    if (password === undefined) return 'You must enter a password'
+    if (confirmPassword === undefined) return 'You must confirm your password'
 
     const hashPassword = await bcrypt.hash(password, 10)
 
-    const [ id ] = await db('users')
-      .returning('id')
-      .insert({
+    const [id] = await db('users').returning('id').insert({
       email,
       password: hashPassword
     })
@@ -43,14 +40,11 @@ const newUser = async (data, db = connection) => {
     })
     return { id, email, fullName }
   } catch (err) {
-
     if (err.message.includes('insert into `users` (`email`, `password`)')) {
-      return "Email is already in use"
+      return 'Email is already in use'
     } else {
       return err.stack
     }
-
-
   }
 }
 

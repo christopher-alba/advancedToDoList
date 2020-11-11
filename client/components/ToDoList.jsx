@@ -12,6 +12,15 @@ const ADD_ITEM = gql`
     }
   }
 `
+
+const DELETE_ITEM = gql`
+  mutation DeleteItem($id: ID!) {
+    deleteItem(id: $id){
+      id
+    }
+  }
+`
+
 const Todolist = (props) => {
   const [item, setItem] = useState('')
   const [addItem] = useMutation(ADD_ITEM, {
@@ -23,6 +32,14 @@ const Todolist = (props) => {
     ]
   })
 
+  const [deleteItem] = useMutation(DELETE_ITEM, {
+    refetchQueries: [
+      {
+        query: GET_USER_LISTS,
+        variables: { user_id: props.userId }
+      }
+    ]
+  })
   const handleAddItem = () => {
     addItem({
       variables: { item: item, todolist_id: props.todoId }
@@ -40,6 +57,9 @@ const Todolist = (props) => {
         placeholder="add another item"
       />
       <Button onClick={() => handleAddItem()}>+</Button>
+      {props.itemId && <Button variant='warning' onClick={() => deleteItem({
+        variables: {id: props.itemId}
+      })}>Delete Item</Button>}
     </div>
   )
 }

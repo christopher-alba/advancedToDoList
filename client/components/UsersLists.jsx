@@ -11,6 +11,7 @@ export const GET_USER_LISTS = gql`
       user_id
       items {
         item
+        id
       }
     }
   }
@@ -18,6 +19,7 @@ export const GET_USER_LISTS = gql`
 
 const UsersLists = (props) => {
   const [selected, setSelected] = useState(null)
+  const [selectedItem, setSelectedItem] = useState(null)
   let { data, loading } = useQuery(GET_USER_LISTS, {
     variables: { user_id: props.userId }
   })
@@ -42,9 +44,9 @@ const UsersLists = (props) => {
             {data.lists
               .find((el) => el.id === selected)
               .items.map((el, i) => (
-                <li key={i}>{el.item}</li>
+                <li key={i} onClick = {() => setSelectedItem(el.id)}>{el.item}</li>
               ))}
-            <ToDoList userId={props.userId} todoId={selected} />
+            <ToDoList userId={props.userId} todoId={selected} itemId={selectedItem} />
           </>
         )}
       </ul>

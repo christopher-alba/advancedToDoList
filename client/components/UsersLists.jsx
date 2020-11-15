@@ -61,14 +61,17 @@ const UsersLists = (props) => {
           </div>
         ))}
       <Button variant='dark' onClick={async () => {
+        await setSelected(null)
+        console.log(selected);
         await deleteListItems({variables: {todolist_id: selected}})
         deleteList({variables: {id: selected}})
+       
       }}>Delete List</Button>
       <h3>List Items</h3>
       <ul>
         {selected && (
           <>
-            {data && data.lists
+            {data.lists
               .find((el) => el.id === selected)
               .items.map((el, i) => (
                 <li key={i} onClick={() => setSelectedItem(el.id)}>{el.item}</li>

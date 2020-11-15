@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
-import { useQuery, gql } from '@apollo/client'
+import { useQuery, gql, useMutation } from '@apollo/client'
 import ToDoList from './ToDoList'
 import { connect } from 'react-redux'
+import Button from 'react-bootstrap/Button'
 
 export const GET_USER_LISTS = gql`
   query UserLists($user_id: ID!) {
@@ -16,13 +17,35 @@ export const GET_USER_LISTS = gql`
     }
   }
 `
-
+const DELETE_USER_LIST = gql`
+  mutation DeleteList($todolist_id: ID!){
+    deleteList(id: $todolist_id){
+      id
+    }
+  }
+`
+const DELETE_LIST_ITEMS = gql`
+  mutation DeleteListItems($todolist_id: ID!){
+    deleteItems(todolist_id: $todolist_id){
+      id
+    }
+  }
+`
 const UsersLists = (props) => {
   const [selected, setSelected] = useState(null)
   const [selectedItem, setSelectedItem] = useState(null)
   let { data, loading } = useQuery(GET_USER_LISTS, {
     variables: { user_id: props.userId }
   })
+  const [deleteList] = useMutation(DELETE_USER_LIST, {
+    refetchQueries: [
+      {
+        query: GET_USER_LISTS,
+        variables: { user_id: props.userId }
+      }
+    ]
+  })
+  const [deleteListItems] = useMutation(DELETE_LIST_ITEMS)
 
   if (loading) {
     return <div>Loading...</div>
@@ -37,6 +60,10 @@ const UsersLists = (props) => {
             {list.name}
           </div>
         ))}
+      <Button variant='dark' onClick={async () => {
+        await deleteListItems(selected)
+        deleteList(selected)
+       }}>Delete List</Button>
       <h3>List Items</h3>
       <ul>
         {selected && (
@@ -44,7 +71,7 @@ const UsersLists = (props) => {
             {data.lists
               .find((el) => el.id === selected)
               .items.map((el, i) => (
-                <li key={i} onClick = {() => setSelectedItem(el.id)}>{el.item}</li>
+                <li key={i} onClick={() => setSelectedItem(el.id)}>{el.item}</li>
               ))}
             <ToDoList userId={props.userId} todoId={selected} itemId={selectedItem} />
           </>

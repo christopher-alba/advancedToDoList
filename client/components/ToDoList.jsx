@@ -57,7 +57,7 @@ const Todolist = (props) => {
         placeholder="add another item"
       />
       <Button onClick={() => handleAddItem()}>+</Button>
-      {props.itemId && <Button variant='warning' onClick={() => deleteItem({
+      {props.itemId && <Button variant='danger' onClick={() => deleteItem({
         variables: {id: props.itemId}
       })}>Delete Item</Button>}
     </div>

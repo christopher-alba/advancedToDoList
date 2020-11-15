@@ -95,7 +95,7 @@ const UsersLists = (props) => {
         <Button onClick={() => {
           addList({ variables: { user_id: props.userId, name: listName } })
         }}>+</Button>
-        {selected && <h3>List {data.lists.find((el) => el.id === selected).name} Items</h3>}
+        {selected && <h3>List "{data.lists.find((el) => el.id === selected).name}" Items</h3>}
         <div>
           {selected && (
             <>

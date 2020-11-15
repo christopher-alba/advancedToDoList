@@ -74,7 +74,7 @@ const UsersLists = (props) => {
   return (
     <div className="mainContainer">
       <div>
-        <h1>Welcome to your to do list</h1>
+        <h1>Welcome to your to do list { props.username }</h1>
         <h3>Lists</h3>
         {data &&
           data.lists.map((list, i) => (
@@ -85,37 +85,45 @@ const UsersLists = (props) => {
               {list.name}
             </div>
           ))}
-        {selected && <Button variant='dark' onClick={async () => {
-          await setSelected(null)
-          await deleteListItems({ variables: { todolist_id: selected } })
-          deleteList({ variables: { id: selected } })
+        <div style={{ marginTop: "20px" }}>
+          <input className="listInput" placeholder="add new list here" type="text" onChange={(evt) => setListName(evt.target.value)} />
+          <Button variant='dark' style={{ marginRight: "10px", marginLeft: "10px" }} onClick={() => {
+            addList({ variables: { user_id: props.userId, name: listName } })
+          }}>+</Button>
+          {selected && <Button variant='dark' onClick={async () => {
+            await setSelected(null)
+            await deleteListItems({ variables: { todolist_id: selected } })
+            deleteList({ variables: { id: selected } })
 
-        }}>Delete List</Button>}
-        <input type="text" onChange={(evt) => setListName(evt.target.value)} />
-        <Button onClick={() => {
-          addList({ variables: { user_id: props.userId, name: listName } })
-        }}>+</Button>
-        {selected && <h3>List "{data.lists.find((el) => el.id === selected).name}" Items</h3>}
-        <div>
-          {selected && (
-            <>
-              {data.lists
-                .find((el) => el.id === selected)
-                .items.map((el, i) => (
-                  <div className={el.id === selectedItem ? 'selectedItem' : ''} key={i} onClick={() => setSelectedItem(el.id)}>{el.item}</div>
-                ))}
-            </>
-          )}
+          }}>Delete List</Button>}
         </div>
-        {selected && <ToDoList userId={props.userId} todoId={selected} itemId={selectedItem} />}
+
+        <div style={{ marginTop: "50px" }}>
+          {selected && <h3>List "{data.lists.find((el) => el.id === selected).name}" Items</h3>}
+          <div>
+            {selected && (
+              <>
+                {data.lists
+                  .find((el) => el.id === selected)
+                  .items.map((el, i) => (
+                    <div className={el.id === selectedItem ? 'selectedItem' : ''} key={i} onClick={() => setSelectedItem(el.id)}>{el.item}</div>
+                  ))}
+              </>
+            )}
+          </div>
+          {selected && <ToDoList userId={props.userId} todoId={selected} itemId={selectedItem} />}
+        </div>
+
       </div>
     </div>
   )
 }
 
 const mapStateToProps = (state) => {
+  console.log(state);
   return {
-    userId: state.auth.user.id
+    userId: state.auth.user.id,
+    username: state.auth.user.fullName
   }
 }
 

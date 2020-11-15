@@ -2,8 +2,8 @@ import React, { useState } from 'react'
 import { useQuery, gql, useMutation } from '@apollo/client'
 import { connect } from 'react-redux'
 import Button from 'react-bootstrap/Button'
-
 import { GET_USER_LISTS } from './UsersLists'
+import './todolist.css'
 
 const ADD_ITEM = gql`
   mutation AddItem($item: String!, $todolist_id: ID!) {
@@ -50,13 +50,14 @@ const Todolist = (props) => {
   }
 
   return (
-    <div>
+    <div style={{ marginTop: "20px" }}>
       <input
         onChange={handleChange}
         type="text"
         placeholder="add another item"
+        className="itemInput"
       />
-      <Button onClick={() => handleAddItem()}>+</Button>
+      <Button style={{marginRight: "10px", marginLeft: "10px"}} variant='dark' onClick={() => handleAddItem()}>+</Button>
       {props.itemId && (
         <Button
           variant="danger"

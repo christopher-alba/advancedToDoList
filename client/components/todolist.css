@@ -1,0 +1,14 @@
+.itemInput {
+  background:rgba(255, 255, 255, 0.452);
+  border:none;
+  border-bottom:2px solid black;
+  transition:500ms;
+  padding:6px;
+  border-radius:5px;
+}
+
+.itemInput:focus{
+  outline: none;
+  border-bottom-color: rgb(46, 128, 196);
+  transition:500ms;
+}

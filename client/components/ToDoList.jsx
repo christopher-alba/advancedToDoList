@@ -50,7 +50,7 @@ const Todolist = (props) => {
   }
 
   return (
-    <div style={{ background: 'black', color: 'white' }}>
+    <div>
       <input
         onChange={handleChange}
         type="text"

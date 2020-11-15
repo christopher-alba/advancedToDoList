@@ -3,6 +3,7 @@ import { useQuery, gql, useMutation } from '@apollo/client'
 import ToDoList from './ToDoList'
 import { connect } from 'react-redux'
 import Button from 'react-bootstrap/Button'
+import './usersLists.css'
 
 export const GET_USER_LISTS = gql`
   query UserLists($user_id: ID!) {
@@ -71,42 +72,44 @@ const UsersLists = (props) => {
     return <div>Loading...</div>
   }
   return (
-    <main>
-      <h1>Welcome to your to do list</h1>
-      <h3>Lists</h3>
-      {data &&
-        data.lists.map((list, i) => (
-          <div key={i} onClick={() => {
-            setSelected(list.id)
-            setSelectedItem(null)
-          }}>
-            {list.name}
-          </div>
-        ))}
-      <Button variant='dark' onClick={async () => {
-        await setSelected(null)
-        await deleteListItems({ variables: { todolist_id: selected } })
-        deleteList({ variables: { id: selected } })
+    <div className="mainContainer">
+      <div>
+        <h1>Welcome to your to do list</h1>
+        <h3>Lists</h3>
+        {data &&
+          data.lists.map((list, i) => (
+            <div key={i} className={list.id === selected ? 'selectedList' : ''} onClick={() => {
+              setSelected(list.id)
+              setSelectedItem(null)
+            }}>
+              {list.name}
+            </div>
+          ))}
+        {selected && <Button variant='dark' onClick={async () => {
+          await setSelected(null)
+          await deleteListItems({ variables: { todolist_id: selected } })
+          deleteList({ variables: { id: selected } })
 
-      }}>Delete List</Button>
-      <input type="text" onChange={(evt) => setListName(evt.target.value)} />
-      <Button onClick = {() => {
-        addList({ variables: {user_id: props.userId, name: listName}})
-      }}>+</Button>
-      <h3>List Items</h3>
-      <ul>
-        {selected && (
-          <>
-            {data.lists
-              .find((el) => el.id === selected)
-              .items.map((el, i) => (
-                <li key={i} onClick={() => setSelectedItem(el.id)}>{el.item}</li>
-              ))}
-            <ToDoList userId={props.userId} todoId={selected} itemId={selectedItem} />
-          </>
-        )}
-      </ul>
-    </main>
+        }}>Delete List</Button>}
+        <input type="text" onChange={(evt) => setListName(evt.target.value)} />
+        <Button onClick={() => {
+          addList({ variables: { user_id: props.userId, name: listName } })
+        }}>+</Button>
+        {selected && <h3>List {data.lists.find((el) => el.id === selected).name} Items</h3>}
+        <div>
+          {selected && (
+            <>
+              {data.lists
+                .find((el) => el.id === selected)
+                .items.map((el, i) => (
+                  <div className={el.id === selectedItem ? 'selectedItem' : ''} key={i} onClick={() => setSelectedItem(el.id)}>{el.item}</div>
+                ))}
+            </>
+          )}
+        </div>
+        {selected && <ToDoList userId={props.userId} todoId={selected} itemId={selectedItem} />}
+      </div>
+    </div>
   )
 }
 

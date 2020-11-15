@@ -36,7 +36,7 @@ const Todolist = (props) => {
     refetchQueries: [
       {
         query: GET_USER_LISTS,
-        variables: { id: props.userId }
+        variables: { user_id: props.userId }
       }
     ]
   })

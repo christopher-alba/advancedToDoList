@@ -18,15 +18,15 @@ export const GET_USER_LISTS = gql`
   }
 `
 const DELETE_USER_LIST = gql`
-  mutation DeleteList($todolist_id: ID!){
-    deleteList(id: $todolist_id){
+  mutation DeleteList($todolist_id: ID!) {
+    deleteList(id: $todolist_id) {
       id
     }
   }
 `
 const DELETE_LIST_ITEMS = gql`
-  mutation DeleteListItems($todolist_id: ID!){
-    deleteItems(todolist_id: $todolist_id){
+  mutation DeleteListItems($todolist_id: ID!) {
+    deleteItems(todolist_id: $todolist_id) {
       id
     }
   }
@@ -45,11 +45,11 @@ const UsersLists = (props) => {
       }
     ]
   })
-  const [deleteListItems] = useMutation(DELETE_LIST_ITEMS)
 
   if (loading) {
     return <div>Loading...</div>
   }
+  console.log(selected)
   return (
     <main>
       <h1>Welcome to your to do list</h1>
@@ -60,10 +60,18 @@ const UsersLists = (props) => {
             {list.name}
           </div>
         ))}
-      <Button variant='dark' onClick={async () => {
-        await deleteListItems(selected)
-        deleteList(selected)
-       }}>Delete List</Button>
+      {selected && (
+        <Button
+          variant="dark"
+          onClick={() => {
+            deleteList({ variables: { todolist_id: selected } })
+            setSelected(null)
+          }}
+        >
+          Delete List
+        </Button>
+      )}
+
       <h3>List Items</h3>
       <ul>
         {selected && (
@@ -71,9 +79,15 @@ const UsersLists = (props) => {
             {data.lists
               .find((el) => el.id === selected)
               .items.map((el, i) => (
-                <li key={i} onClick={() => setSelectedItem(el.id)}>{el.item}</li>
+                <li key={i} onClick={() => setSelectedItem(el.id)}>
+                  {el.item}
+                </li>
               ))}
-            <ToDoList userId={props.userId} todoId={selected} itemId={selectedItem} />
+            <ToDoList
+              userId={props.userId}
+              todoId={selected}
+              itemId={selectedItem}
+            />
           </>
         )}
       </ul>

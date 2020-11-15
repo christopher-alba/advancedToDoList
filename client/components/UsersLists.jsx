@@ -18,15 +18,15 @@ export const GET_USER_LISTS = gql`
   }
 `
 const DELETE_USER_LIST = gql`
-  mutation DeleteList($todolist_id: ID!){
-    deleteList(id: $todolist_id){
+  mutation DeleteList($id: ID!) {
+    deleteList(id: $id) {
       id
     }
   }
 `
 const DELETE_LIST_ITEMS = gql`
-  mutation DeleteListItems($todolist_id: ID!){
-    deleteItems(todolist_id: $todolist_id){
+  mutation DeleteListItems($todolist_id: ID!) {
+    deleteItems(todolist_id: $todolist_id) {
       id
     }
   }
@@ -63,7 +63,7 @@ const UsersLists = (props) => {
       <Button variant='dark' onClick={async () => {
         await deleteListItems(selected)
         deleteList(selected)
-       }}>Delete List</Button>
+      }}>Delete List</Button>
       <h3>List Items</h3>
       <ul>
         {selected && (

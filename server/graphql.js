@@ -159,9 +159,22 @@ const RootMutationType = new GraphQLObjectType({
         id: { type: GraphQLNonNull(GraphQLID) }
       },
       resolve: (parent, args) => {
-        let dblist = Item.deleteTodolistItem(args.id)
+        let dbitem = Item.deleteTodolistItem(args.id)
         return {
-          id: dblist
+          id: dbitem
+        }
+      }
+    },
+    deleteItems:{
+      type: ListType,
+      description: 'deletes all items in a list',
+      args: {
+        todolist_id: {type: GraphQLNonNull(GraphQLID)}
+      },
+      resolve: (parent, args) => {
+        let dbListId = Item.deleteTodolistItems(args.todolist_id)
+        return {
+          id: dbListId
         }
       }
     }

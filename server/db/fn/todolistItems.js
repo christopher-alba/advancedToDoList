@@ -35,15 +35,23 @@ const updateTodolistItem = (updates, todolistID, db = connection) => {
 }
 
 const deleteTodolistItem = (itemID, db = connection) => {
-  return db('todolist')
+  return db('todolistItems')
     .where('id', itemID)
     .delete()
     .then(() => itemID)
+}
+
+const deleteTodolistItems = (todolistID, db = connection) => {
+  return db('todolistItems')
+    .where('todolist_id', todolistID)
+    .delete()
+    .then(() => todolistID)
 }
 module.exports = {
   getTodolistItems,
   getTodoItem,
   addTodolistItem,
   updateTodolistItem,
-  deleteTodolistItem
+  deleteTodolistItem,
+  deleteTodolistItems
 }

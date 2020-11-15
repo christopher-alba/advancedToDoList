@@ -31,9 +31,21 @@ const DELETE_LIST_ITEMS = gql`
     }
   }
 `
+
+const ADD_USER_LIST = gql`
+  mutation AddList($user_id: ID!, $name: String!) {
+    addList(user_id: $user_id, name: $name) {
+      id
+      name
+      user_id
+    }
+  }
+`
+
 const UsersLists = (props) => {
   const [selected, setSelected] = useState(null)
   const [selectedItem, setSelectedItem] = useState(null)
+  const [listName, setListName] = useState(null)
   let { data, loading } = useQuery(GET_USER_LISTS, {
     variables: { user_id: props.userId }
   })
@@ -46,6 +58,14 @@ const UsersLists = (props) => {
     ]
   })
   const [deleteListItems] = useMutation(DELETE_LIST_ITEMS)
+  const [addList] = useMutation(ADD_USER_LIST, {
+    refetchQueries: [
+      {
+        query: GET_USER_LISTS,
+        variables: { user_id: props.userId }
+      }
+    ]
+  })
 
   if (loading) {
     return <div>Loading...</div>
@@ -59,16 +79,20 @@ const UsersLists = (props) => {
           <div key={i} onClick={() => {
             setSelected(list.id)
             setSelectedItem(null)
-            }}>
+          }}>
             {list.name}
           </div>
         ))}
       <Button variant='dark' onClick={async () => {
         await setSelected(null)
-        await deleteListItems({variables: {todolist_id: selected}})
-        deleteList({variables: {id: selected}})
-       
+        await deleteListItems({ variables: { todolist_id: selected } })
+        deleteList({ variables: { id: selected } })
+
       }}>Delete List</Button>
+      <input type="text" onChange={(evt) => setListName(evt.target.value)} />
+      <Button onClick = {() => {
+        addList({ variables: {user_id: props.userId, name: listName}})
+      }}>+</Button>
       <h3>List Items</h3>
       <ul>
         {selected && (

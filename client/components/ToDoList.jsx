@@ -15,7 +15,7 @@ const ADD_ITEM = gql`
 
 const DELETE_ITEM = gql`
   mutation DeleteItem($id: ID!) {
-    deleteItem(id: $id){
+    deleteItem(id: $id) {
       id
     }
   }
@@ -36,7 +36,7 @@ const Todolist = (props) => {
     refetchQueries: [
       {
         query: GET_USER_LISTS,
-        variables: { user_id: props.userId }
+        variables: { id: props.userId }
       }
     ]
   })
@@ -57,9 +57,18 @@ const Todolist = (props) => {
         placeholder="add another item"
       />
       <Button onClick={() => handleAddItem()}>+</Button>
-      {props.itemId && <Button variant='danger' onClick={() => deleteItem({
-        variables: {id: props.itemId}
-      })}>Delete Item</Button>}
+      {props.itemId && (
+        <Button
+          variant="danger"
+          onClick={() =>
+            deleteItem({
+              variables: { id: props.itemId }
+            })
+          }
+        >
+          Delete Item
+        </Button>
+      )}
     </div>
   )
 }
